@@ -17,9 +17,7 @@ class Dense(Module):
     Weight and bias initialization strategy.
   """
   def __init__(self, in_dim, out_dim, strategy=None):
-    _strategy = strategy(in_dim, out_dim)
-    W, b = _strategy.initialize_weights_and_bias()
-
+    W, b = strategy(in_dim, out_dim).initialize_weights_and_bias()
     self.trainable_parameters = [Parameter(W), Parameter(b)]
 
   def forward(self, x):
