@@ -59,6 +59,48 @@ class Dense(Module):
     dx = np.matmul(grad, W.value)
     return dx
 
+class Sigmoid(Module):
+  """NumPy implementation the Sigmoid Activation."""
+  def __init__(self):
+    super().__init__()
+  
+  def forward(self, x):
+    """Forward propagation through Sigmoid.
+
+    Parameters
+    ----------
+    x : np.array
+      Input for this layer.
+  
+    Returns
+    -------
+    np.array
+      Output of this layer.
+    """
+    self.x = x
+    fx = 1 / (1 + np.exp(-x))
+    self.fx = fx
+    return fx
+
+  def backward(self, grad):
+    """
+    Backward propogation for Sigmoid.
+
+    Parameters
+    ----------
+    grad : np.array
+      Gradient (Loss w.r.t. data) flowing backwards from the next layer,
+      dL/dx_k. Should have dimensions (batch, dim).
+
+    Returns
+    -------
+    np.array
+      Gradients for the inputs to this layer, dL/dx_{k-1}. Should
+      have dimensions (batch, dim).
+    """
+    dLdx = grad * (self.fx * (1 - self.fx))
+    return dLdx
+
 class SoftmaxCrossEntropy(Module):
   """Softmax Cross Entropy fused output activation."""
   def __init__(self):
