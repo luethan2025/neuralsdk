@@ -144,6 +144,50 @@ class Tanh(Module):
     dLdx = grad * (1 - np.square(self.fx))
     return dLdx
 
+class ReLU(Module):
+  """NumPy implementation the ReLU Activation (Rectified Linear Unit)."""
+  def __init__(self):
+    super().__init__()
+
+  def forward(self, x):
+    """Forward propagation through ReLU.
+
+    Parameters
+    ----------
+    x : np.array
+      Input for this layer.
+  
+    Returns
+    -------
+    np.array
+      Output of this layer.
+    """
+    self.x = x
+    fx = np.copy(x)
+    fx[x <= 0] = 0
+    return fx
+
+  def backward(self, grad):
+    """
+    Backward propogation for ReLU.
+
+    Parameters
+    ----------
+    grad : np.array
+      Gradient (Loss w.r.t. data) flowing backwards from the next layer,
+      dL/dx_k. Should have dimensions (batch, dim).
+
+    Returns
+    -------
+    np.array
+      Gradients for the inputs to this layer, dL/dx_{k-1}. Should
+      have dimensions (batch, dim).
+    """
+    dxdx = np.ones_like(self.x)
+    dxdx[self.x <= 0] = 0
+    dLdx = grad * dxdx
+    return dLdx
+
 class SoftmaxCrossEntropy(Module):
   """Softmax Cross Entropy fused output activation."""
   def __init__(self):
