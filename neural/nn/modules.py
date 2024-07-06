@@ -101,6 +101,49 @@ class Sigmoid(Module):
     dLdx = grad * (self.fx * (1 - self.fx))
     return dLdx
 
+class Tanh(Module):
+  """NumPy implementation the Tanh Activation (Hyperbolic Tangent)."""
+  def __init__(self):
+    super().__init__()
+
+  def forward(self, x):
+    """Forward propagation through Tanh.
+
+    Parameters
+    ----------
+    x : np.array
+      Input for this layer.
+  
+    Returns
+    -------
+    np.array
+      Output of this layer.
+    """
+    self.x = x
+    fx = np.divide(
+      np.exp(x) - np.exp(-x), np.exp(x) + np.exp(-x))
+    self.fx = fx
+    return fx
+
+  def backward(self, grad):
+    """
+    Backward propogation for Tanh.
+
+    Parameters
+    ----------
+    grad : np.array
+      Gradient (Loss w.r.t. data) flowing backwards from the next layer,
+      dL/dx_k. Should have dimensions (batch, dim).
+
+    Returns
+    -------
+    np.array
+      Gradients for the inputs to this layer, dL/dx_{k-1}. Should
+      have dimensions (batch, dim).
+    """
+    dLdx = grad * (1 - np.square(self.fx))
+    return dLdx
+
 class SoftmaxCrossEntropy(Module):
   """Softmax Cross Entropy fused output activation."""
   def __init__(self):
