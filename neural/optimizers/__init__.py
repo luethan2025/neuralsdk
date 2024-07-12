@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from .modules import SGD
+from .modules import SGD, Adam
 
 __all__ = [
-  "SGD"
+  "SGD", "Adam"
 ]
