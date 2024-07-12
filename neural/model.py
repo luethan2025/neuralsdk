@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 
 from .lr_schedulers import ConstantLR
-from .optimizers import SGD
+from .optimizers import available_optimizers
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
   """Cross entropy loss function.
@@ -65,9 +65,9 @@ class Sequential:
     for module in modules:
       self.params += module.trainable_parameters
 
-    if optimizer == SGD:
+    if optimizer in available_optimizers:
       self.optimizer = optimizer()
-    elif isinstance(optimizer, SGD):
+    elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
       self.optimizer = optimizer
     self.optimizer.initialize_params(self.params)
 
