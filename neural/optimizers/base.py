@@ -11,6 +11,16 @@ class Optimizer:
       List of parameters to initialize state for.
     """
 
+  def adjust_lr(self, gamma):
+    """Adjust learning rate by a fixed rate.
+
+    Parameters
+    ----------
+    gamma : float
+      Learning rate decay parameter.
+    """
+    self.lr *= gamma
+
   def apply_gradients(self, params):
     """Apply gradients to parameters.
 
