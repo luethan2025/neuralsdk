@@ -21,6 +21,16 @@ class Scheduler:
     """
     self.optimizer = optimizer
 
+  def get_optimizer(self):
+    """Return the optimizer policy the learning rate scheduler updates
+
+    Returns
+    -------
+    Optimizer
+      Optimizer policy.
+    """
+    return self.optimizer
+
   def step():
     """Apply learning rate update policy."""
     raise NotImplementedError()
