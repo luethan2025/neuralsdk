@@ -71,7 +71,7 @@ class Sequential:
       self.optimizer = optimizer
     self.optimizer.initialize_params(self.params)
 
-    if isinstance(lr_scheduler, ConstantLR):
+    if lr_scheduler in [ConstantLR]:
       self.lr_scheduler = lr_scheduler(self.optimizer)
     elif any([
         isinstance(lr_scheduler, s)
