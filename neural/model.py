@@ -3,7 +3,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from .lr_schedulers import ConstantLR
+from .lr_schedulers import available_configurable_lr_schedulers, ConstantLR
 from .optimizers import available_optimizers
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
@@ -71,7 +71,13 @@ class Sequential:
       self.optimizer = optimizer
     self.optimizer.initialize_params(self.params)
 
-    self.lr_scheduler = lr_scheduler(self.optimizer)
+    if isinstance(lr_scheduler, ConstantLR):
+      self.lr_scheduler = lr_scheduler(self.optimizer)
+    elif any([
+        isinstance(lr_scheduler, s)
+        for s in available_configurable_lr_schedulers]):
+      lr_scheduler.set_optimizer(self.optimizer)
+      self.lr_scheduler = lr_scheduler
   
   def forward(self, X):
     """Model forward pass.
