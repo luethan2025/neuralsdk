@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from .modules import ConstantLR, StepLR
+from .modules import ConstantLR, StepLR, MultiStepLR
 
-available_configurable_lr_schedulers = [StepLR]
+available_configurable_lr_schedulers = [StepLR, MultiStepLR]
 __all__ = [
   "available_configuration_lr_schedulers",
-  "ConstantLR", "StepLR"
+  "ConstantLR", "StepLR", "MultiStepLR"
 ]
