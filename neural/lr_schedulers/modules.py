@@ -11,7 +11,7 @@ class ConstantLR(Scheduler):
     Optimizer policy.
   """
   def __init__(self, optimizer):
-    self.optimizer = optimizer
+    super().__init__(optimizer)
 
   def step(self):
     """Apply learning rate update policy."""
@@ -29,10 +29,10 @@ class StepLR(Scheduler):
     Learning rate decay parameter.
   """
   def __init__(self, optimizer, step_size, gamma=0.1):
-    self.optimizer = optimizer
     self.step_size = step_size
     self.gamma = gamma
     self.last_epoch = 0
+    super().__init__(optimizer)
 
   def step(self):
     """Apply learning rate update policy."""

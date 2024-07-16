@@ -15,6 +15,13 @@ class SGD(Optimizer):
   def __init__(self, lr=0.01):
     self.lr = lr
 
+  def initialize_params(self, params):
+    """Initialize optimizer state.
+
+    params : np.array[]
+      List of parameters that will be used with this optimizer.
+    """
+
   def apply_gradients(self, params):
     """Apply gradients to parameters.
 
