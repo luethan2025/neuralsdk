@@ -64,4 +64,3 @@ class MultiStepLR(Scheduler):
     self.last_epoch = self.last_epoch + 1
     if self.last_epoch in self.milestones:
       self.optimizer.adjust_lr(self.gamma)
-    print(self.optimizer.lr)
