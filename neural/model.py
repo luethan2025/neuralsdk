@@ -3,7 +3,7 @@
 import numpy as np
 from tqdm import tqdm
 
-from .lr_schedulers import ConstantLR
+from .lr_schedulers import ConstantLR, ChainedScheduler
 from .optimizers import available_optimizers
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
@@ -65,16 +65,28 @@ class Sequential:
     for module in modules:
       self.params += module.trainable_parameters
 
-    if optimizer is None and lr_scheduler is not None:
-      self.optimizer = lr_scheduler.get_optimizer()
-      if self.optimizer in available_optimizers:
-        self.optimizer = self.optimizer()
-      elif any([isinstance(self.optimizer, opt) for opt in available_optimizers]):
-        self.optimizer = self.optimizer
+    if optimizer is None and isinstance(lr_scheduler, ChainedScheduler):
+      schedulers = lr_scheduler.get_schedulers()
+      for s in schedulers:
+        optimizer = s.get_optimizer()
+        if optimizer in available_optimizers:
+          optimizer = optimizer()
+        elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
+          optimizer = optimizer
+        s.set_optimizer(optimizer)
+      self.optimizer = schedulers[0].get_optimizer()
+      self.lr_scheduler = lr_scheduler
+
+    elif optimizer is None and lr_scheduler is not None:
+      optimizer = lr_scheduler.get_optimizer()
+      if optimizer in available_optimizers:
+        self.optimizer = optimizer()
+      elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
+        self.optimizer = optimizer
       lr_scheduler.set_optimizer(self.optimizer)
       self.lr_scheduler = lr_scheduler
 
-    if optimizer is not None and lr_scheduler is None:
+    elif optimizer is not None and lr_scheduler is None:
       if optimizer in available_optimizers:
         self.optimizer = optimizer()
       elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
