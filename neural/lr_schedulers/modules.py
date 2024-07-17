@@ -64,3 +64,29 @@ class MultiStepLR(Scheduler):
     self.last_epoch = self.last_epoch + 1
     if self.last_epoch in self.milestones:
       self.optimizer.adjust_lr(self.gamma)
+
+class ChainedScheduler(Scheduler):
+  """Chain multiple learning rate schedulers together.
+
+  Parameters
+  ----------
+  schedulers : Scheduler[]
+    List of learning rate schedulers.
+  """
+  def __init__(self, schedulers):
+    self.schedulers = schedulers
+
+  def get_schedulers(self):
+    """Return the list of learning rate schedulers.
+  
+    Return
+    ------
+    Scheduler[]
+      List of learning rate schedulers.
+    """
+    return self.schedulers
+
+  def step(self):
+    """Apply learning rate update policy."""
+    for s in self.schedulers:
+      s.step()
