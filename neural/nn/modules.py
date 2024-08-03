@@ -13,11 +13,15 @@ class Dense(Module):
     Length of input dimensions.
   out_dim : int
     Length of output dimensions.
-  initialization_technique : Techique
-    Weight and bias initialization technique.
+  weight_initializer : WeightInitializer
+    Weight initialization method.
+  bias_initializer : BiasInitializer
+    bias initialization method.
   """
-  def __init__(self, in_dim, out_dim, initialization_technique=None):
-    W, b = initialization_technique(in_dim, out_dim).initialize_weights_and_bias()
+  def __init__(
+      self, in_dim, out_dim, weight_initializer=None, bias_initializer=None):
+    W = weight_initializer(in_dim, out_dim).init_params()
+    b = bias_initializer(out_dim).init_params()
     self.trainable_parameters = [Parameter(W), Parameter(b)]
 
   def forward(self, x):
