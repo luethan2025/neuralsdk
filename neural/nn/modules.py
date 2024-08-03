@@ -3,6 +3,8 @@
 import numpy as np
 
 from .base import Module, Parameter
+from ..param_initialization.weights import Xavier
+from ..param_initialization.bias import Zero
 
 class Dense(Module):
   """NumPy implementation of the Dense Layer.
@@ -14,12 +16,12 @@ class Dense(Module):
   out_dim : int
     Length of output dimensions.
   weight_initializer : WeightInitializer
-    Weight initialization method.
+    Weight initialization method (defaults to Xavier).
   bias_initializer : BiasInitializer
-    bias initialization method.
+    bias initialization method (defaults to Zero).
   """
   def __init__(
-      self, in_dim, out_dim, weight_initializer=None, bias_initializer=None):
+      self, in_dim, out_dim, weight_initializer=Xavier, bias_initializer=Zero):
     W = weight_initializer(in_dim, out_dim).init_params()
     b = bias_initializer(out_dim).init_params()
     self.trainable_parameters = [Parameter(W), Parameter(b)]
