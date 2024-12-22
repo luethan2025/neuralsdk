@@ -18,7 +18,7 @@ class Dense(Module):
   weight_initializer : WeightInitializer
     Weight initialization method (defaults to Xavier).
   bias_initializer : BiasInitializer
-    bias initialization method (defaults to Zero).
+    Bias initialization method (defaults to Zero).
   """
   def __init__(
       self, in_dim, out_dim, weight_initializer=Xavier, bias_initializer=Zero):
