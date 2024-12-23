@@ -3,6 +3,8 @@
 import numpy as np
 
 from .base import Module, Parameter
+from .functional import sigmoid, tanh, relu
+from .functional import softmax_cross_entropy
 from .param_initialization.weights import Xavier
 from .param_initialization.bias import Zero
 
@@ -84,7 +86,7 @@ class Sigmoid(Module):
       Output of this layer.
     """
     self.x = x
-    fx = 1 / (1 + np.exp(-x))
+    fx = sigmoid(x)
     self.fx = fx
     return fx
 
@@ -126,8 +128,7 @@ class Tanh(Module):
       Output of this layer.
     """
     self.x = x
-    fx = np.divide(
-      np.exp(x) - np.exp(-x), np.exp(x) + np.exp(-x))
+    fx = tanh(x)
     self.fx = fx
     return fx
 
@@ -169,8 +170,7 @@ class ReLU(Module):
       Output of this layer.
     """
     self.x = x
-    fx = np.copy(x)
-    fx[x <= 0] = 0
+    fx = relu(x)
     return fx
 
   def backward(self, grad):
@@ -212,10 +212,9 @@ class SoftmaxCrossEntropy(Module):
     np.array
       Predictions for this batch. Should have shape (batch, num_classes).
     """
-    exp_logits = np.exp(logits - np.max(logits, axis=1, keepdims=True))
-    self.y_pred = np.divide(
-        exp_logits, np.sum(exp_logits, axis=1, keepdims=True))
-    return self.y_pred
+    y_pred = softmax_cross_entropy(logits)
+    self.y_pred = y_pred
+    return y_pred
 
   def backward(self, labels):
     """Backward propagation of the Softmax activation.
