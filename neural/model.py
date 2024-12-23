@@ -3,8 +3,8 @@
 import numpy as np
 from tqdm import tqdm
 
-from .lr_schedulers import ConstantLR, ChainedScheduler
-from .optimizers import available_optimizers
+from .optim.lr_scheduler import ConstantLR, ChainedScheduler
+from .optim import available_optimizers
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
   """Cross entropy loss function.

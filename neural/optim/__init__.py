@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .modules import SGD, Adam
+from .optimizer import SGD, Adam
 
 available_optimizers = [SGD, Adam]
 __all__ = [

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from .modules import ConstantLR, StepLR, MultiStepLR, ChainedScheduler
+from .lr_scheduler import ConstantLR, StepLR, MultiStepLR, ChainedScheduler
 
 available_configurable_lr_schedulers = [StepLR, MultiStepLR, ChainedScheduler]
 __all__ = [

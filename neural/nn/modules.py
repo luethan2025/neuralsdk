@@ -3,8 +3,8 @@
 import numpy as np
 
 from .base import Module, Parameter
-from ..param_initialization.weights import Xavier
-from ..param_initialization.bias import Zero
+from .param_initialization.weights import Xavier
+from .param_initialization.bias import Zero
 
 class Dense(Module):
   """NumPy implementation of the Dense Layer.
