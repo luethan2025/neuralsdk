@@ -22,7 +22,7 @@ class Scheduler:
     self.optimizer = optimizer
 
   def get_optimizer(self):
-    """Return the optimizer policy the learning rate scheduler updates
+    """Return the optimizer policy the learning rate scheduler updates.
 
     Returns
     -------
