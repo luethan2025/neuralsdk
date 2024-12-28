@@ -3,8 +3,10 @@
 import numpy as np
 from tqdm import tqdm
 
-from .optim.lr_scheduler import ConstantLR, ChainedScheduler
-from .optim import available_optimizers
+from .nn.base import Module
+from .optim import supported_optimizers
+from .optim.lr_scheduler import supported_lr_schedulers
+from .optim.lr_scheduler import ChainedScheduler
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
   """Cross entropy loss function.
@@ -54,10 +56,33 @@ class Sequential:
     Final output activation and loss function.
   optimizer : Optimizer
     Optimization policy.
-  scheduler : Scheduler
+  lr_scheduler : Scheduler
     Learning rate scheduler.
   """
   def __init__(self, modules, loss=None, optimizer=None, lr_scheduler=None):
+    for module in modules:
+      assert(isinstance(module, Module))
+    assert(loss is not None)
+    assert(False if optimizer is None and lr_scheduler is not None else True)
+    assert(optimizer is not None)
+    assert(optimizer in supported_optimizers or \
+      any([
+        isinstance(optimizer, optim) 
+          for optim in supported_optimizers
+      ])
+    )
+    assert(lr_scheduler in supported_lr_schedulers or \
+      any([
+        isinstance(lr_scheduler, scheduler)
+          for scheduler in supported_lr_schedulers
+        ])
+    )
+    if isinstance(lr_scheduler, ChainedScheduler):
+      for scheduler in lr_scheduler.get_schedulers:
+        assert(scheduler in supported_lr_schedulers and \
+          not isinstance(scheduler, ChainedScheduler)
+        )
+
     self.modules = modules
     self.loss = loss()
 
@@ -65,35 +90,11 @@ class Sequential:
     for module in modules:
       self.params += module.trainable_parameters
 
-    if optimizer is None and isinstance(lr_scheduler, ChainedScheduler):
-      schedulers = lr_scheduler.get_schedulers()
-      for s in schedulers:
-        optimizer = s.get_optimizer()
-        if optimizer in available_optimizers:
-          optimizer = optimizer()
-        elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
-          optimizer = optimizer
-        s.set_optimizer(optimizer)
-      self.optimizer = schedulers[0].get_optimizer()
-      self.lr_scheduler = lr_scheduler
-
-    elif optimizer is None and lr_scheduler is not None:
-      optimizer = lr_scheduler.get_optimizer()
-      if optimizer in available_optimizers:
-        self.optimizer = optimizer()
-      elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
-        self.optimizer = optimizer
-      lr_scheduler.set_optimizer(self.optimizer)
-      self.lr_scheduler = lr_scheduler
-
-    elif optimizer is not None and lr_scheduler is None:
-      if optimizer in available_optimizers:
-        self.optimizer = optimizer()
-      elif any([isinstance(optimizer, opt) for opt in available_optimizers]):
-        self.optimizer = optimizer
-      self.lr_scheduler = ConstantLR(self.optimizer)
-        
+    self.optimizer = optimizer
     self.optimizer.initialize_params(self.params)
+
+    self.lr_scheduler = lr_scheduler
+    self.lr_scheduler.set_optimizer(self.optimizer)
 
   def forward(self, X):
     """Model forward pass.

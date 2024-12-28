@@ -3,15 +3,9 @@
 from .base import Scheduler
 
 class ConstantLR(Scheduler):
-  """Maintain the original learning rate.
-
-  Parameters
-  ----------
-  optimizer : Optimizer
-    Optimizer policy.
-  """
-  def __init__(self, optimizer):
-    super().__init__(optimizer)
+  """Maintain the original learning rate."""
+  def __init__(self):
+    super().__init__()
 
   def step(self):
     """Apply learning rate update policy."""
@@ -21,18 +15,16 @@ class StepLR(Scheduler):
 
   Parameters
   ----------
-  optimizer : Optimizer
-    Optimizer policy.
   step_size : int
     Period of learning rate decay.
   gamma : float 
     Learning rate decay parameter (defaults to 0.1).
   """
-  def __init__(self, optimizer, step_size, gamma=0.1):
+  def __init__(self, step_size, gamma=0.1):
     self.step_size = step_size
     self.gamma = gamma
     self.last_epoch = 0
-    super().__init__(optimizer)
+    super().__init__()
 
   def step(self):
     """Apply learning rate update policy."""
@@ -46,18 +38,16 @@ class MultiStepLR(Scheduler):
 
   Parameters
   ----------
-  optimizer : Optimizer
-    Optimizer policy.
   milestones : int[]
     List of epoch indices.
   gamma : float 
     Learning rate decay parameter (defaults to 0.1).
   """
-  def __init__(self, optimizer, milestones, gamma=0.1):
+  def __init__(self, milestones, gamma=0.1):
     self.milestones = milestones
     self.gamma = gamma
     self.last_epoch = 0
-    super().__init__(optimizer)
+    super().__init__()
 
   def step(self):
     """Apply learning rate update policy."""
