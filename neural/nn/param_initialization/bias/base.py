@@ -2,7 +2,7 @@
 
 class BiasInitializer:
   """Base class for bias initialization."""
-  def init_params(self):
+  def initialize_params(self):
     """Initialize bias vector.
 
     Returns

@@ -15,7 +15,7 @@ class Zero(BiasInitializer):
     """
     self.out_dim = out_dim
 
-  def init_params(self):
+  def initialize_params(self):
     """Apply zero initialization.
 
     Returns

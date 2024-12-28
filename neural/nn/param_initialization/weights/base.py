@@ -2,7 +2,7 @@
 
 class WeightInitializer:
   """Base class for weight initialization."""
-  def init_params(self):
+  def initialize_params(self):
     """Initialize weight matrix.
 
     Returns

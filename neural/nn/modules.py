@@ -24,8 +24,8 @@ class Dense(Module):
   """
   def __init__(
       self, in_dim, out_dim, weight_initializer=Xavier, bias_initializer=Zero):
-    W = weight_initializer(in_dim, out_dim).init_params()
-    b = bias_initializer(out_dim).init_params()
+    W = weight_initializer(in_dim, out_dim).initialize_params()
+    b = bias_initializer(out_dim).initialize_params()
     self.trainable_parameters = [Parameter(W), Parameter(b)]
 
   def forward(self, x):

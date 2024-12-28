@@ -18,7 +18,7 @@ class Xavier(WeightInitializer):
     self.in_dim = in_dim
     self.out_dim = out_dim
 
-  def init_params(self):
+  def initialize_params(self):
     """Apply Uniform Xavier initialization.
 
     Returns
@@ -43,7 +43,7 @@ class He(WeightInitializer):
     self.in_dim = in_dim
     self.out_dim = out_dim
 
-  def init_params(self):
+  def initialize_params(self):
     """Apply Uniform He initialization.
 
     Returns
