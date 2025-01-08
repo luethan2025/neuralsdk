@@ -11,6 +11,7 @@ class Scheduler:
       Optimizer policy.
     """
     self.optimizer = optimizer
+    self.last_lr = self.optimizer.get_lr()
 
   def get_optimizer(self):
     """Return the optimizer policy the learning rate scheduler updates.

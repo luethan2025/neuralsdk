@@ -79,3 +79,5 @@ class Adam(Optimizer):
           (p.m / (1 - self.beta1))
           / (np.sqrt(p.v / (1 - self.beta2)) + self.epsilon))
       p.value -= self.lr * update
+
+supported_optimizers = [SGD, Adam]

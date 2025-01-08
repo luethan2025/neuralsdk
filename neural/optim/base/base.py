@@ -11,6 +11,16 @@ class Optimizer:
       List of parameters to initialize state for.
     """
 
+  def get_lr(self):
+    """
+    Return the current learning rate.
+
+    Return
+    ------
+    Current learning rate.
+    """
+    return self.lr
+
   def adjust_lr(self, gamma):
     """Adjust learning rate by a fixed rate.
 

@@ -30,7 +30,10 @@ class StepLR(Scheduler):
     """Apply learning rate update policy."""
     self.last_epoch = self.last_epoch + 1
     if not (self.last_epoch % self.step_size):
+      self.last_lr = self.optimizer.get_lr()
       self.optimizer.adjust_lr(self.gamma)
+
+      assert(self.optimizer.get_lr() == self.last_lr * self.gamma)
 
 class MultiStepLR(Scheduler):
   """Decay the learning rate by gamma when the number of epoch reaches a
@@ -53,7 +56,10 @@ class MultiStepLR(Scheduler):
     """Apply learning rate update policy."""
     self.last_epoch = self.last_epoch + 1
     if self.last_epoch in self.milestones:
+      self.last_lr = self.optimizer.get_lr()
       self.optimizer.adjust_lr(self.gamma)
+
+      assert(self.optimizer.get_lr() == self.last_lr * self.gamma)
 
 class ChainedScheduler(Scheduler):
   """Chain multiple learning rate schedulers together.
@@ -64,7 +70,24 @@ class ChainedScheduler(Scheduler):
     List of learning rate schedulers.
   """
   def __init__(self, schedulers):
+    for lr_scheduler in schedulers:
+      assert(any([
+        isinstance(lr_scheduler, scheduler)
+          for scheduler in supported_lr_schedulers
+      ]))
+
     self.schedulers = schedulers
+    
+  def set_optimizer(self, optimizer):
+    """Change the optimizer policy of the learning rate scheduler points to.
+
+    Parameters
+    ----------
+    optimizer : Optimizer
+      Optimizer policy.
+    """
+    for scheduler in self.schedulers:
+      scheduler.set_optimizer(optimizer)
 
   def get_schedulers(self):
     """Return the list of learning rate schedulers.
@@ -80,3 +103,5 @@ class ChainedScheduler(Scheduler):
     """Apply learning rate update policy."""
     for s in self.schedulers:
       s.step()
+
+supported_lr_schedulers = [ConstantLR, StepLR, MultiStepLR, ChainedScheduler]

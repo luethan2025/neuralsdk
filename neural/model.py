@@ -4,9 +4,10 @@ import numpy as np
 from tqdm import tqdm
 
 from .nn.base import Module
+from .nn.modules import SoftmaxCrossEntropy
 from .optim import supported_optimizers
 from .optim.lr_scheduler import supported_lr_schedulers
-from .optim.lr_scheduler import ChainedScheduler
+from .optim.lr_scheduler import ConstantLR
 
 def categorical_cross_entropy(pred, labels, epsilon=1e-10):
   """Cross entropy loss function.
@@ -45,6 +46,69 @@ def categorical_accuracy(pred, labels):
   """
   return np.mean(np.argmax(pred, axis=1) == np.argmax(labels, axis=1))
 
+def instantiate_loss(loss):
+  """Instantiate loss function.
+
+  Parameters
+  ----------
+  loss : Module
+    Final output activation and loss function.
+
+  Return
+  ------
+  Module
+    Instantiated loss function.
+  """
+  if loss in [SoftmaxCrossEntropy]:
+    return loss()
+  elif isinstance(loss, SoftmaxCrossEntropy):
+    return loss
+
+def instantiate_optimizer(optimizer):
+  """Instantiate optimization policy.
+
+  Parameters
+  ----------
+  optimizer : Optimizer
+    Optimization policy.
+
+  Return
+  ------
+  Optimizer
+    Instantiated optimizer.
+  """
+  if optimizer in supported_optimizers:
+    return optimizer()
+  elif any([
+    isinstance(optimizer, optim) 
+      for optim in supported_optimizers
+   ]):
+    return optimizer
+
+def instantiate_lr_scheduler(lr_scheduler):
+  """Instantiate learning rate scheduler.
+
+  Parameters
+  ----------
+  lr_scheduler : Scheduler
+    Learning rate scheduler.
+
+  Return
+  ------
+  Scheduler
+    Instantiated learning rate scheduler.
+  """
+  if lr_scheduler is None:
+    return ConstantLR()
+  elif lr_scheduler in supported_lr_schedulers:
+    return lr_scheduler()
+  elif any([
+    isinstance(lr_scheduler, scheduler)
+      for scheduler in supported_lr_schedulers
+  ]):
+    return lr_scheduler
+
+
 class Sequential:
   """Sequential neural network model.
 
@@ -77,23 +141,18 @@ class Sequential:
           for scheduler in supported_lr_schedulers
         ])
     )
-    if isinstance(lr_scheduler, ChainedScheduler):
-      for scheduler in lr_scheduler.get_schedulers:
-        assert(scheduler in supported_lr_schedulers and \
-          not isinstance(scheduler, ChainedScheduler)
-        )
 
     self.modules = modules
-    self.loss = loss()
+    self.loss = instantiate_loss(loss)
 
     self.params = []
     for module in modules:
       self.params += module.trainable_parameters
 
-    self.optimizer = optimizer
+    self.optimizer = instantiate_optimizer(optimizer)
     self.optimizer.initialize_params(self.params)
 
-    self.lr_scheduler = lr_scheduler
+    self.lr_scheduler = instantiate_lr_scheduler(lr_scheduler)
     self.lr_scheduler.set_optimizer(self.optimizer)
 
   def forward(self, X):
@@ -174,5 +233,4 @@ class Sequential:
     pred = self.forward(dataset.X)
     loss = categorical_cross_entropy(pred, dataset.y)
     acc = categorical_accuracy(pred, dataset.y)
-
     return loss, acc
