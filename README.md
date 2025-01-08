@@ -1,4 +1,4 @@
-# Getting Started
+## Getting Started
 ```console
 $ python -m venv venv
 $ source venv/bin/activate
